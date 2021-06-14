@@ -7,7 +7,9 @@ def getApps():
      apps = []
      files = os.listdir()
      for file in files:
-          if str(file) != "League DOC.py":
+          if "." in file:
+               pass
+          else:
                apps.append(str(file))
      return apps
 window = tk.Tk()

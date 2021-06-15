@@ -1,8 +1,12 @@
 import tkinter as tk
+import importlib
 import os
+import sys
 from functools import partial
 def buttonPressed(button):
-     tk.Label(text = "app ran = "+button).grid(row = 1,column =1)
+     print(sys.path)
+     mymodule = importlib.import_module(button)
+     mymodule.run(tk)
 def getApps():
      apps = []
      files = os.listdir()
@@ -10,10 +14,12 @@ def getApps():
           if "." in file:
                pass
           else:
-               apps.append(str(file))
+               apps.append(file)
+               path = os.getcwd()+"\\"+file
+               sys.path.append(path)
+               
      return apps
 window = tk.Tk()
-apps = getApps()
 label = tk.Label(text="Apps")
 label.grid(row=0,column=0)
 counter = 1

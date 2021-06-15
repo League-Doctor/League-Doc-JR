@@ -23,9 +23,9 @@ def get_apps():
     return apps
 
 
-window = tk.Tk()
-label = tk.Label(text="Apps")
-label.grid(row=0, column=0)
+root = tk.Tk()
+app_label = tk.Label(text="Apps")
+app_label.grid(row=0, column=0)
 counter = 1
 for app in get_apps():
     app = str(app)
@@ -39,4 +39,4 @@ for app in get_apps():
          command=button_with_arg
     ).grid(row=counter,  column=0)
     counter += 1
-window.mainloop()
+root.mainloop()

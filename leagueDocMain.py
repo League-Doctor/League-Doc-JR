@@ -4,7 +4,7 @@ import subprocess
 import threading
 
 
-def dataCollection():
+def data_collection():
     subprocess.call("pythonw.exe dataCollector.py", shell=False)
 
 
@@ -16,7 +16,7 @@ def gui():
 
     root.mainloop()
 
-t2 = threading.Thread(target=dataCollection, args=())
+t2 = threading.Thread(target=data_collection, args=())
 t1 = threading.Thread(target=gui, args=())
 t1.start()
 t2.start()

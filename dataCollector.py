@@ -34,9 +34,9 @@ async def save_end_game(game):
         else:
             final_date += character
     with open(os.getcwd() + "\\Dataset\\" + final_date + ".csv", 'a') as dataset:
-        csvwriter = csv.writer(dataset)
+        csv_writer = csv.writer(dataset)
         for key, value in game.items():
-            csvwriter.writerow([key, value])
+            csv_writer.writerow([key, value])
         dataset.close()
 
 

@@ -13,7 +13,7 @@ def run(app_frame):
 
     #app favoriting section
     app_fav_section = Label(app_frame, text="Fav Apps")
-    app_fav_section_advice = Label(app_frame, text="Choose up to four")
+    app_fav_section_advice = Label(app_frame, text="Choose up to five")
     app_fav_section.grid(row=0, column =2)
     app_fav_section_advice.grid(row=1, column=2)
     counter = 0
@@ -49,10 +49,10 @@ def favoring_apps(checkboxes,advice):
             count +=1
             favs.append(currentApps[counter+1])
         counter += 1
-    if count > 5:
-        advice.configure(text="You have Entered more than 4")
+    if count > 6:
+        advice.configure(text="You have Entered more than 5")
     else:
-        while len(favs) <5:
+        while len(favs) <6:
             favs.append("___")
         with open("favoriteApps.csv", "w") as file:
             writer = csv.writer(file)

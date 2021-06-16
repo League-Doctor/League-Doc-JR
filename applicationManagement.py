@@ -12,6 +12,7 @@ def get_favorited_apps():
         fav_apps.append("___")
         fav_apps.append("___")
         fav_apps.append("___")
+        fav_apps.append("___")
         with open("favoriteApps.csv", "w") as file:
             writer = csv.writer(file)
             writer.writerow(fav_apps)

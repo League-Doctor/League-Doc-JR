@@ -6,7 +6,6 @@ import importlib
 
 
 class GUI:
-
     def __init__(self, root):
         # window resolution
         self.width = 0
@@ -53,26 +52,32 @@ class GUI:
         canvas.pack(side="left")
         canvas.create_window((0, 0), window=frame, anchor='nw')
         frame.bind("<Configure>", canvas.configure(scrollregion=canvas.bbox('all'),
-                                                   width=int(self.width - (self.width / 5)-20),
-                                                   height=int(self.height)-20))
+                                                   width=int(self.width - (self.width / 5) - 20),
+                                                   height=int(self.height) - 20))
 
         # test_label = Label(running_app_frame, text='Click on Home Please')
         # test_label.grid(row=0, column=1)
         return running_app_frame
+
+    def refresh_favs(self):
+        for x in range(6):
+            self.app_buttons[x].destroy()
+        self.show_app_buttons()
 
     def show_app_buttons(self):
         current_row = 1
         Am.get_apps()
         for app in Am.get_favorited_apps():
             app = str(app)[3:]
-            size_frame = Frame(self.apps_list_frame, width=int(self.width / 5), height=int((self.height - (self.height / 12)) / 6))
+            size_frame = Frame(self.apps_list_frame, width=int(self.width / 5),
+                               height=int((self.height - (self.height / 12)) / 6))
             size_frame.propagate(False)
             button = Button(
-                 size_frame,
-                 text=app,
-                 bg="black",
-                 fg="white",
-                 command=lambda text=app: self.run_applications(text)
+                size_frame,
+                text=app,
+                bg="black",
+                fg="white",
+                command=lambda text=app: self.run_applications(text)
             )
             self.app_buttons.append(button)
             self.app_button_frames.append(size_frame)
@@ -85,7 +90,10 @@ class GUI:
     def run_applications(self, folder_name):
         if folder_name != "":
             my_module = importlib.import_module(folder_name)
-            my_module.run(self.running_app_frame)
+            if folder_name =="Home":
+                my_module.run(self.running_app_frame, self)
+            else:
+                my_module.run(self.running_app_frame)
 
     def get_start_window_size(self):
         w_res = GetSystemMetrics(0)

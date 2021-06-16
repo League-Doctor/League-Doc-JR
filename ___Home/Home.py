@@ -21,7 +21,7 @@ def run(app_frame):
     for app in applicationManagement.get_apps():
         if not app == "___Home":
             checkboxVariables.append(IntVar())
-            Checkbutton(app_frame, text=app, variable=checkboxVariables[counter]).grid(row=counter+2, column=2)
+            Checkbutton(app_frame, text=app[3:], variable=checkboxVariables[counter]).grid(row=counter+2, column=2)
             counter += 1
     favoring_button = Button(app_frame,
                               text="set Favs",

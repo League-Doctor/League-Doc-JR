@@ -59,10 +59,9 @@ class GUI:
         # test_label.grid(row=0, column=1)
         return running_app_frame
 
-    def refresh_favs(self):
+    def refresh_favs(self,favApps):
         for x in range(6):
-            self.app_buttons[x].destroy()
-        self.show_app_buttons()
+            self.app_buttons[x].configure(text=favApps[x][3:])
 
     def show_app_buttons(self):
         current_row = 1

@@ -57,7 +57,7 @@ def favoring_apps(checkboxes, advice, gui):
             writer = csv.writer(file)
             writer.writerow(favs)
         advice.configure(text="favs added")
-        gui.refresh_favs()
+        gui.refresh_favs(favs)
 
 
 def browse_files(app_adder_text):

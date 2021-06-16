@@ -62,7 +62,8 @@ class GUI:
 
     def show_app_buttons(self):
         current_row = 1
-        for app in Am.get_apps():
+        Am.get_apps()
+        for app in Am.get_favorited_apps():
             app = str(app)[3:]
             size_frame = Frame(self.apps_list_frame, width=int(self.width / 5), height=int((self.height - (self.height / 12)) / 6))
             size_frame.propagate(False)
@@ -82,8 +83,9 @@ class GUI:
 
     # imports the applications code from its file and executes it
     def run_applications(self, folder_name):
-        my_module = importlib.import_module(folder_name)
-        my_module.run(tk, self.running_app_frame)
+        if folder_name != "":
+            my_module = importlib.import_module(folder_name)
+            my_module.run(self.running_app_frame)
 
     def get_start_window_size(self):
         w_res = GetSystemMetrics(0)

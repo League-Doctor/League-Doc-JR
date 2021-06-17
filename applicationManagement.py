@@ -2,10 +2,11 @@ import os
 import sys
 import csv
 
+
 # creates an array for all the applications, specified with folders not including '.'
-def get_favorited_apps():
+def get_favorite_apps():
     fav_apps = []
-    #if it dosnt exist build a file with only home as its fav
+    # if it doesnt exist build a file with only home as its fav
     if not os.path.isfile("favoriteApps.csv"):
         fav_apps.append("___Home")
         fav_apps.append("___")
@@ -24,6 +25,8 @@ def get_favorited_apps():
                 for app in line:
                     fav_apps.append(app)
     return fav_apps
+
+
 def get_apps():
     apps = []
     files = os.listdir()

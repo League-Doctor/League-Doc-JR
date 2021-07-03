@@ -49,7 +49,7 @@ class GUI:
         running_app_frame.bind("<Configure>", canvas.configure(scrollregion=canvas.bbox('all'),
                                                                width=int(self.width - (self.width / 5) - 20),
                                                                height=int(self.height) - 20))
-        # canvas.configure(scrollregion=(0, 0, int(self.width - (self.width / 5) - 20), int(self.height) - 20 + 500))
+        canvas.configure(scrollregion=(0, 0, int(self.width - (self.width / 5) - 20), int(self.height) - 20))
 
         # test_label = Label(running_app_frame, text='Click on Home Please')
         # test_label.grid(row=0, column=1)

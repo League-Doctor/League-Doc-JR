@@ -15,50 +15,62 @@ def run(gui):
     app_boxes = []
     app_frame_width = int(gui.width - (gui.width / 5))
     app_frame_height = int(gui.height)
-    # print(f'{app_frame_width}, {app_frame_height}')
     scroll_region_height = 0
-    """
-    
-    Test for scroll region sizing
-    
-    for i in range(50):
-        label_frame = Frame(app_frame, width=60, height=50, bg='white', pady=10, padx=2)
-        scroll_region_height += 50
-        label_frame.pack_propagate(0)
-        label = Label(label_frame, fg='black', text="app ran")
-        label.pack()
-        label_frame.grid(row=i, column=0)
-    gui.set_scroll_region_size(gui.width, scroll_region_height)
-    
-    """
+
+    # creates sorting frames
+    options_frame = Frame(app_frame)
+    options_frame.grid(row=0, column=0)
+    app_boxes_frame = Frame(app_frame)
+    app_boxes_frame.grid(row=1, column=0)
 
     # app favoriting section
     app_fav_section = Label(app_frame, text="Fav Apps")
     app_fav_section_advice = Label(app_frame, text="Choose up to five")
     app_fav_section.grid(row=0, column=2)
     app_fav_section_advice.grid(row=1, column=2)
-    counter = 0
+
+    # puts checkboxes on app boxes
     checkbox_variables = []
-    for app in Am.get_apps():
+    apps = Am.get_apps()
+    fav_apps = Am.get_favorite_apps()
+    counter = 0
+    row_counter = 1
+    col_counter = 0
+    fav_app_counter = 1
+    for app in apps:
         if not app == "___Home":
-            checkbox_variables.append(IntVar())
-            Checkbutton(app_frame, text=app[3:], variable=checkbox_variables[counter]).grid(row=counter + 2, column=2)
+            if app != fav_apps[fav_app_counter]:
+                checkbox_variables.append(IntVar())
+            else:
+                if fav_app_counter < len(fav_apps) - 1:
+                    fav_app_counter += 1
+                checkbox_variables.append(IntVar(value=1))
+            app_boxes.append(create_app_box(gui, app[3:], 10 + col_counter, row_counter))
+            Checkbutton(app_boxes[counter], variable=checkbox_variables[counter],
+                        fg='DarkGray', bg='DarkGray').pack(side=BOTTOM)
             counter += 1
-    favoring_button = Button(app_frame,
-                             text="Set Favorites",
-                             command=lambda text=checkbox_variables: favoring_apps(text, app_fav_section_advice, gui))
-    favoring_button.grid(row=counter + 2, column=2)
+            if row_counter == 3:
+                row_counter = 1
+                col_counter += 1
+            else:
+                row_counter += 1
+    favoriting_button = Button(app_frame, text="Set Favorites", command=lambda: favoring_apps(checkbox_variables,
+                                                                                              app_fav_section_advice,
+                                                                                              gui))
+    favoriting_button.grid(row=2, column=2)
 
     # app adding section
     app_adder_text = Label(app_frame, text="Add new apps here")
     app_adder_button = Button(app_frame,
                               text="Add App",
                               command=lambda text=app_adder_text: browse_files(text))
-    app_adder_text.grid(row=1, column=1)
+    app_adder_text.grid(row=0, column=1)
     app_adder_button.grid(row=2, column=1)
-    create_app_box(gui, 'TEST', 10, 1)
-    create_app_box(gui, 'TEST', 10, 2)
-    create_app_box(gui, 'TEST', 10, 3)
+
+    # increases scroll region size to fit # of app boxes
+    if len(app_boxes) / 3 > 4:
+        gui.set_scroll_region_size(int(gui.width - (gui.width / 5) - 20), int(gui.height) - 20 +
+                                   (((int(int(gui.width - (gui.width / 5)) / 3) - 100) / 2.41) * (len(app_boxes) / 3 - 3)))
 
 
 def create_app_box(gui, name, row, col):
@@ -67,15 +79,17 @@ def create_app_box(gui, name, row, col):
     app_frame_width = int(gui.width - (gui.width / 5))
 
     # create the app box
-    frame = Frame(app_frame, bg='DarkGray', width=int(app_frame_width / 3) - 100, height=100)
+    frame = Frame(app_frame, bg='DarkGray', width=int(app_frame_width / 3) - 100, height=(int(app_frame_width / 3) - 100) / 2.41)
     frame.pack_propagate(0)
 
     # create name_label
-    name_label = Label(frame, text=name, fg='LightGray', bg='DarkGray')
+    name_label = Label(frame, text=name, fg='Black', bg='DarkGray')
     name_label.pack(pady=5, side=TOP)
 
     # inserts the app box
     frame.grid(row=row, column=col, padx=50, pady=15)
+
+    return frame
 
 
 def favoring_apps(checkboxes, advice, gui):
@@ -89,14 +103,14 @@ def favoring_apps(checkboxes, advice, gui):
             favs.append(current_apps[counter + 1])
         counter += 1
     if len(favs) > 6:
-        advice.configure(text="You have Entered more than 5")
+        advice.configure(text="You can not favorite more than 5 apps.")
     else:
         while len(favs) < 6:
             favs.append("___")
         with open("favoriteApps.csv", "w") as file:
             writer = csv.writer(file)
             writer.writerow(favs)
-        advice.configure(text="favs added")
+        advice.configure(text="Favorites Added")
         gui.refresh_favorites(favs)
 
 

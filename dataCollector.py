@@ -22,7 +22,7 @@ async def get_end_game(connection):
 
 
 async def save_end_game(game):
-    if os.path.exists(os.getcwd() + "\\Dataset") != True:
+    if not os.path.exists(os.getcwd() + "\\Dataset"):
         os.mkdir(os.getcwd() + "\\Dataset")
     date = str(datetime.now())
     final_date = ""

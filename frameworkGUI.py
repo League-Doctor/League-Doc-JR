@@ -1,9 +1,10 @@
 import applicationManagement as Am
 from win32api import GetSystemMetrics
 from tkinter import *
-import tkinter as tk
+import colorScheme as Cs
 import importlib
 
+color_scheme = Cs.basic_color_scheme
 
 class GUI:
     def __init__(self, root):
@@ -19,28 +20,30 @@ class GUI:
         self.root = root
         self.root.geometry(self.get_start_window_size())
         self.root.title('League Doc')
-        self.root.configure(bg="DarkGray")
+        self.root.configure(bg=color_scheme['root'])
 
         # packed frame
-        self.centered_frame = Frame(self.root, width=self.width, height=self.height)
+        self.centered_frame = Frame(self.root, width=self.width, height=self.height, bg=color_scheme['dark'])
         self.centered_frame.place(in_=self.root, anchor="c", relx=.5, rely=.5)
 
         # app frame
         self.running_app_frame = self.create_running_app_frame()
 
         # app buttons
-        self.apps_list_frame = Frame(self.centered_frame)
-        self.app_label_frame = Frame(self.apps_list_frame, width=(int(self.width / 5)), height=int(self.height / 12))
-        self.app_label = Label(self.app_label_frame, text="Apps", bg='LightGray')
+        self.apps_list_frame = Frame(self.centered_frame, bg=color_scheme['light'])
+        self.app_label_frame = Frame(self.apps_list_frame, width=(int(self.width / 5)), height=int(self.height / 12),
+                                     bg=color_scheme['dark'])
+        self.app_label = Label(self.app_label_frame, text="Apps", bg=color_scheme['light'])
         self.app_label_frame.propagate(False)
         self.app_label_frame.grid(row=0, column=0)
         self.app_label.pack(expand=True, fill=BOTH)
 
     def create_running_app_frame(self):
-        canvas_frame = Frame(self.centered_frame, width=int(self.width - (self.width / 5)), height=int(self.height))
-        canvas = Canvas(canvas_frame)
-        running_app_frame = Frame(canvas)
-        scrollbar = Scrollbar(canvas_frame, orient="vertical", command=canvas.yview)
+        canvas_frame = Frame(self.centered_frame, width=int(self.width - (self.width / 5)), height=int(self.height),
+                             bg=color_scheme['dark'])
+        canvas = Canvas(canvas_frame, bg=color_scheme['dark'])
+        running_app_frame = Frame(canvas, bg=color_scheme['dark'])
+        scrollbar = Scrollbar(canvas_frame, orient="vertical", command=canvas.yview, bg=color_scheme['dark'])
         canvas.configure(yscrollcommand=scrollbar.set)
 
         scrollbar.pack(side="right", fill='y')
@@ -49,13 +52,16 @@ class GUI:
         running_app_frame.bind("<Configure>", canvas.configure(scrollregion=canvas.bbox('all'),
                                                                width=int(self.width - (self.width / 5) - 20),
                                                                height=int(self.height) - 20))
-        canvas.configure(scrollregion=(0, 0, int(self.width - (self.width / 5) - 20), int(self.height) - 20))
+        canvas.configure(scrollregion=(0, 0, int(self.width - (self.width / 5) - 20), int(self.height) - 20),
+                         bg=color_scheme['dark'])
 
-        # test_label = Label(running_app_frame, text='Click on Home Please')
-        # test_label.grid(row=0, column=1)
         canvas_frame.grid_propagate(0)
         canvas_frame.grid(row=0, column=1)
         return running_app_frame
+
+    def clear_running_app_frame(self):
+        for widgets in self.running_app_frame.winfo_children():
+            widgets.destroy()
 
     def refresh_favorites(self, fav_apps):
         for x in range(6):
@@ -72,8 +78,8 @@ class GUI:
             button = Button(
                 size_frame,
                 text=app,
-                bg="black",
-                fg="white",
+                bg=color_scheme['dark_text'],
+                fg=color_scheme['light_text'],
                 command=lambda text=app: self.run_applications(text)
             )
             self.app_buttons.append(button)
@@ -85,6 +91,7 @@ class GUI:
 
     # imports the applications code from its file and executes it
     def run_applications(self, folder_name):
+        self.clear_running_app_frame()
         if folder_name != "":
             my_module = importlib.import_module(folder_name)
             if folder_name =="Home":

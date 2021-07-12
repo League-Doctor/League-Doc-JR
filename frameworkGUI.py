@@ -8,6 +8,9 @@ color_scheme = Cs.basic_color_scheme
 
 class GUI:
     def __init__(self, root):
+        # api key
+        self.api_key = 'RGAPI-4ff4953a-c479-4103-baa8-bfe8919db0f3'
+
         # window resolution
         self.width = 0
         self.height = 0

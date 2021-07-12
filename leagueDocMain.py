@@ -16,6 +16,7 @@ def gui():
 
     root.mainloop()
 
+
 t2 = threading.Thread(target=data_collection, args=())
 t1 = threading.Thread(target=gui, args=())
 t1.start()

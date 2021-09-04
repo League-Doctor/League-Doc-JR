@@ -13,6 +13,7 @@ def gui():
 
     gui = GUI(root)
     gui.show_app_buttons()
+    gui.run_applications('Home')
 
     root.mainloop()
 

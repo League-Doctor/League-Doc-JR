@@ -6,10 +6,11 @@ import importlib
 
 color_scheme = Cs.basic_color_scheme
 
+
 class GUI:
     def __init__(self, root):
-        # api key
-        self.api_key = 'RGAPI-4ff4953a-c479-4103-baa8-bfe8919db0f3'
+        # api key: must be updated every 24 hours
+        self.api_key = 'RGAPI-8abb8fa4-a25d-4857-9f95-975d0cdf8ae6'
 
         # window resolution
         self.width = 0

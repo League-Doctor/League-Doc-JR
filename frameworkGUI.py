@@ -32,6 +32,8 @@ class GUI:
 
         # app frame
         self.running_app_frame = self.create_running_app_frame()
+        self.raf_width = int(self.width - (self.width / 5))
+        self.raf_height = int(self.height)
 
         # app buttons
         self.apps_list_frame = Frame(self.centered_frame, bg=color_scheme['light'])

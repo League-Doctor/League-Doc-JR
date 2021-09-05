@@ -26,7 +26,6 @@ data_columns = wanted_stats[:]
 data_columns.insert(0, 'summonerName')
 
 
-
 def run(gui):
     api_key = gui.api_key
     watcher = LolWatcher(api_key)
@@ -35,8 +34,6 @@ def run(gui):
     app_frame_height = int(gui.height)
 
     SummonerNameEntry(gui, watcher)
-
-
 
 
 class SummonerNameEntry:
@@ -101,33 +98,27 @@ class SummonerNameEntry:
         return self.watcher.match_v5.matchlist_by_puuid('AMERICAS', summoner_puuid)
 
     def get_data_csv(self):
+        print('retrieving matchlist...')
         match_list = self.retrieve_match_list()
+        print('request received')
 
         last_twenty_matches = []
+        print('filling match_list...')
         for match in match_list:
             last_twenty_matches.append(self.watcher.match_v5.by_id('AMERICAS', match))
+        print('finished filling match_list')
 
         for match in last_twenty_matches:
+            print('creating players array')
             players = []
             for player in match['info']['participants']:
-                summoner_name_temp = ''
-                player_stats = []
-                for stat in player:
-                    wanted = False
-                    if stat == 'summonerName':
-                        summoner_name_temp = player[stat]
-                    else:
-                        for stat_name in wanted_stats:
-                            if stat == stat_name:
-                                wanted = True
-                                break
-                            else:
-                                wanted = False
-                        if wanted is True:
-                            player_stats.append(player[stat])
-                player_stats.insert(0, summoner_name_temp)
+                player_stats = [player['summonerName']]
+
+                for stat in range(len(wanted_stats)):
+                    player_stats.append(player[wanted_stats[stat]])
                 players.append(player_stats)
 
+            print('creating csv...')
             match_list_df = pd.DataFrame(players, columns=data_columns)
             player_dir = '.\\playerMatchHistory\\' + self.summoner_name + '\\'
             csv_file_name = match['metadata']['matchId'] + '.csv'

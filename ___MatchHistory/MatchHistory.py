@@ -1,11 +1,11 @@
 import time
+import threading
 import os
 from riotwatcher import LolWatcher, ApiError
 from tkinter import *
 import pandas as pd
 import applicationManagement as Am
 import colorScheme as Cs
-import csv
 
 color_scheme = Cs.basic_color_scheme
 wanted_stats = ['assists', 'baronKills', 'champLevel', 'championId', 'championName', 'damageDealtToBuildings',
@@ -85,11 +85,21 @@ class SummonerNameEntry:
         self.get_data_csv()
         self.gui.clear_running_app_frame()
 
-        back_button = Button(self.running_app_frame, text='Submit', fg=color_scheme['light_text'],
+        match_hist_frame = Frame(self.running_app_frame, width=self.gui.raf_width - 100,
+                                 height=self.gui.raf_height - 100,
+                                 bg='blue')  # color_scheme['dark'])
+        match_hist_frame.pack_propagate(0)
+
+        match_hist_label = Label(match_hist_frame, text=f'{self.summoner_name}\'s Match History',
+                                 fg=color_scheme['dark_text'], bg=color_scheme['dark'], font=90)
+        match_hist_label.pack(side=TOP, pady=5)
+        back_button = Button(match_hist_frame, text='Enter New Summoner', fg=color_scheme['light_text'],
                              bg=color_scheme['dark_text'],
                              command=lambda: self.get_sum_name(),
                              font=90)
-        back_button.place(anchor='c', relx=.5, rely=.4)
+        back_button.pack(side=BOTTOM, pady=5)
+
+        match_hist_frame.place(anchor=CENTER, relx=.5, rely=.5)
 
     def retrieve_match_list(self):
         self.make_player_dir()
@@ -97,28 +107,49 @@ class SummonerNameEntry:
         summoner_puuid = summoner['puuid']
         return self.watcher.match_v5.matchlist_by_puuid('AMERICAS', summoner_puuid)
 
-    def get_data_csv(self):
-        print('retrieving matchlist...')
-        match_list = self.retrieve_match_list()
-        print('request received')
+    def retrieve_match_data(self, match_id, match_data, index):
+        match_data.insert(index, self.watcher.match_v5.by_id('AMERICAS', match_id))
 
-        last_twenty_matches = []
+    def concurrency_test(self):
+        print(f'name: {self.summoner_name}')
+
+    def get_data_csv(self):
+        # print('retrieving match list...')
+        match_list = self.retrieve_match_list()
+        # print('request received')
+
         print('filling match_list...')
-        for match in match_list:
-            last_twenty_matches.append(self.watcher.match_v5.by_id('AMERICAS', match))
+        last_twenty_matches = []
+        match_download_threads = []
+
+        time.sleep(1)
+        for i in range(20):
+            thread = threading.Thread(target=self.retrieve_match_data,
+                                      args=(match_list[i], last_twenty_matches, i))
+            match_download_threads.append(thread)
+            thread.start()
+        time.sleep(1)
+
+        for i in range(len(match_download_threads)):
+            match_download_threads[i].join()
         print('finished filling match_list')
 
         for match in last_twenty_matches:
-            print('creating players array')
+            # print('creating players array')
             players = []
             for player in match['info']['participants']:
                 player_stats = [player['summonerName']]
 
                 for stat in range(len(wanted_stats)):
-                    player_stats.append(player[wanted_stats[stat]])
+                    try:
+                        player_stats.append(player[wanted_stats[stat]])
+                    except KeyError:
+                        # print(f'player does not have stat {wanted_stats[stat]}')
+                        player_stats.append('NONE')
+
                 players.append(player_stats)
 
-            print('creating csv...')
+            # print('creating csv...')
             match_list_df = pd.DataFrame(players, columns=data_columns)
             player_dir = '.\\playerMatchHistory\\' + self.summoner_name + '\\'
             csv_file_name = match['metadata']['matchId'] + '.csv'

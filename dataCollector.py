@@ -1,3 +1,16 @@
+"""
+
+dataCollector
+
+This program is meant to automatically collect data during the champion selection stage of a League of Legends game
+in order to plug the data into the Machine Learning function (that is not yet created) and then create a prediction
+to be displayed in a separate app. This program is meant to run on a separate thread from the GUI.
+
+@author Joseph Miller, Devin
+@version September 12, 2021
+
+"""
+
 from lcu_driver import Connector
 import csv
 import json

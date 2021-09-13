@@ -1,6 +1,19 @@
+"""
+Home
+
+Home is the main program for the application known as "Home". This class runs the gui setup code for the home
+application, sets up the code to add new apps, access apps not under the current favourites, and the ability
+to add apps to the favourites list (up to 5).
+
+@author Joseph Miller
+@version September 12, 2021
+
+"""
 from tkinter import *
 import shutil
 import os
+from tkinter import filedialog
+
 import applicationManagement as Am
 import colorScheme as Cs
 import csv
@@ -18,17 +31,17 @@ def run(gui):
     app_frame_width = int(gui.width - (gui.width / 5))
     app_frame_height = int(gui.height)
 
-    # creates sorting frames
-    options_frame = Frame(app_frame, width=app_frame_width, height=app_frame_height / 9,
+    # creates layout frames
+    options_frame = Frame(app_frame, width=app_frame_width, height=app_frame_height / 9,  # stores the options
                           bg=color_scheme['dark'], pady=0, padx=app_frame_width / 4)
     options_frame.pack_propagate(0)
     options_frame.pack(side=TOP)
-    app_boxes_frame = Frame(app_frame, width=app_frame_width, height=app_frame_height,
+    app_boxes_frame = Frame(app_frame, width=app_frame_width, height=app_frame_height,  # stores the app boxes
                             bg=color_scheme['light'], pady=5, padx=0)
     app_boxes_frame.grid_propagate(0)
     app_boxes_frame.pack(side=BOTTOM)
 
-    # app favoriting options section
+    # creates app favoriting options section
     app_fav_section_frame = Frame(options_frame, bg=color_scheme['dark'], pady=5, padx=5)
     app_fav_section_frame.pack(side=RIGHT)
     app_fav_section = Label(app_fav_section_frame, text="Fav Apps", bg=color_scheme['dark'])
@@ -36,7 +49,7 @@ def run(gui):
     app_fav_section.grid(row=0, column=2)
     app_fav_section_advice.grid(row=1, column=2)
 
-    # puts checkboxes on app boxes
+    # places checkboxes on app boxes to allow selection of favourites
     checkbox_variables = []
     apps = Am.get_apps()
     fav_apps = Am.get_favorite_apps()
@@ -61,14 +74,14 @@ def run(gui):
                 col_counter += 1
             else:
                 row_counter += 1
-    favoriting_button = Button(app_fav_section_frame, text="Set Favorites", bg=color_scheme['dark_text'],
-                               fg=color_scheme['light_text'],
-                               command=lambda: favoring_apps(checkbox_variables,
-                                                             app_fav_section_advice,
-                                                             gui))
-    favoriting_button.grid(row=2, column=2)
+    favorite_button = Button(app_fav_section_frame, text="Set Favorites", bg=color_scheme['dark_text'],
+                             fg=color_scheme['light_text'],
+                             command=lambda: favoring_apps(checkbox_variables,
+                                                           app_fav_section_advice,
+                                                           gui))
+    favorite_button.grid(row=2, column=2)
 
-    # app adding section
+    # app adding section for adding new apps to the system
     app_adder_frame = Frame(options_frame, bg=color_scheme['dark'], pady=5, padx=5)
     app_adder_frame.pack(side=LEFT)
     app_adder_text = Label(app_adder_frame, text="Add new apps here", bg=color_scheme['dark'])
@@ -83,11 +96,11 @@ def run(gui):
                                    (((int(int(gui.width - (gui.width / 5)) / 3) - 100) / 2.41) *
                                     (len(app_boxes) / 3 - 3)))
     app_boxes_frame.configure(width=app_frame_width, height=int(gui.height) - 20 + (((int(int(gui.width -
-                                                            (gui.width / 5)) / 3) - 100) / 2.41) * (len(app_boxes) / 3
-                                                            - 3)),
+                              (gui.width / 5)) / 3) - 100) / 2.41) * (len(app_boxes) / 3 - 3)),
                               bg=color_scheme['light'], pady=5, padx=5)
 
 
+# places the according app into a box within the gui in the specified row "row" and column "col"
 def create_app_box(gui, name, row, col):
     # get the main app frame
     app_frame = gui.running_app_frame
@@ -102,43 +115,46 @@ def create_app_box(gui, name, row, col):
                   height=(int(app_frame_width / 3) - 100) / 2.41)
     frame.pack_propagate(0)
 
-    # create name_label
+    # labels the app box
     name_label = Label(frame, text=name, fg=color_scheme['dark_text'], bg=color_scheme['dark'])
     name_label.pack(pady=10, side=TOP)
 
-    # creates run button
+    # adds a button which allows the app to be run from its corresponding app box.
     run_button = Button(frame, text='Run', fg=color_scheme['light_text'], bg=color_scheme['dark_text']
                         , command=lambda: gui.run_applications(name))
     run_button.pack()
 
-    # inserts the app box
+    # inserts the app box into the gui
     frame.grid(row=row, column=col, padx=50, pady=15)
 
     return frame
 
 
+# updates favorite apps when executed
 def favoring_apps(checkboxes, advice, gui):
     count = 0
     counter = 0
     current_apps = Am.get_apps()
-    favs = ["___Home"]
+    favorites = ["___Home"]  # forces home to always be on the favorites list
     for checkbox in checkboxes:
         if checkbox.get() == 1:
             count += 1
-            favs.append(current_apps[counter + 1])
+            favorites.append(current_apps[counter + 1])
         counter += 1
-    if len(favs) > 6:
+    # handles exceptions
+    if len(favorites) > 6:
         advice.configure(text="You can not favorite more than 5 apps.")
     else:
-        while len(favs) < 6:
-            favs.append("___")
+        while len(favorites) < 6:
+            favorites.append("___")
         with open("favoriteApps.csv", "w") as file:
             writer = csv.writer(file)
-            writer.writerow(favs)
+            writer.writerow(favorites)
         advice.configure(text="Favorites Added")
-        gui.refresh_favorites(favs)
+        gui.refresh_favorites(favorites)
 
 
+# allows user to search through the files in order to add new apps into the app folder to be accessed
 def browse_files(app_adder_text):
     # ask the user to find the folder
     dir_path = filedialog.askdirectory()

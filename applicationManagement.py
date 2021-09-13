@@ -1,9 +1,20 @@
+"""
+
+applicationManagement
+
+This program contains methods which manage the different applications that can be opened and closed within the window
+
+@author Joseph Miller
+@version September 12, 2021
+
+"""
+
 import os
 import sys
 import csv
 
 
-# creates an array for all the applications, specified with folders not including '.'
+# creates an array for all the selected favorite applications, specified with folders not including '.'
 def get_favorite_apps():
     fav_apps = []
     # if it doesnt exist build a file with only home as its fav
@@ -27,6 +38,7 @@ def get_favorite_apps():
     return fav_apps
 
 
+# creates an array which contains the strings for the app folders
 def get_apps():
     apps = []
     files = os.listdir()

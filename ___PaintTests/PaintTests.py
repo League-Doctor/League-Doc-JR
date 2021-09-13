@@ -1,4 +1,15 @@
-from datetime import time
+"""
+
+PaintTests
+
+Simply a test app to test the drawing capabilities of the Canvas widget from tkinter
+
+@author Joseph Miller
+@version September 12, 2021
+
+"""
+
+
 from tkinter import *
 import colorScheme as Cs
 

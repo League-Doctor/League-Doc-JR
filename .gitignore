@@ -1,3 +1,7 @@
-
+# files
+*.csv
 *.pyc
 *.xml
+
+#folders
+./playerMatchHistory
